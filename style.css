@@ -1,3 +1,14 @@
+* {
+    /*
+        Global reset to meke sure our page appears the same 
+        across all different browsers.
+        box-sizing: border-box; elements padding and borders are 
+        included in its total width and height.
+    */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 #canvas1 {
     position: absolute;
     top: 0;

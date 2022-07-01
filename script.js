@@ -10,15 +10,14 @@ let mouse = {
 	y: null,
     radius: 80
 }
-window.addEventListener('mousemove', 
-	function(event){
+window.addEventListener('mousemove', function(event){
 		mouse.x = event.x + canvas.clientLeft/2;
 		mouse.y = event.y + canvas.clientTop/2;
 });
 
-function draw(){
-    let imageWidth = png.width || png.naturalWidth;
-    let imageHeight = png.height || png.naturalHeight;
+function drawImg(){
+    let imageWidth = png.width;
+    let imageHeight = png.height;
     const data = ctx.getImageData(0, 0, imageWidth, imageHeight);
     ctx.clearRect(0,0,canvas.width, canvas.height);
     class Particle {
@@ -26,7 +25,7 @@ function draw(){
             this.x = x + canvas.width/2-png.width*2,
             this.y = y + canvas.height/2-png.height*2,
             this.color = color,
-            this.size = 2,
+            this.size = size,
             this.baseX = x + canvas.width/2-png.width*2,
             this.baseY = y + canvas.height/2-png.height*2,
             this.density = ((Math.random() * 10) + 2);
@@ -52,7 +51,7 @@ function draw(){
             // if we go below zero, set it to zero.
             if (force < 0) force = 0;
 
-            let directionX = (forceDirectionX * force * this.density) * 0.9;
+            let directionX = (forceDirectionX * force * this.density) * 0.9; // fuerza con la que se empujan las particulas (org 0.9)
             let directionY = (forceDirectionY * force * this.density) * 0.9;
 
             if (distance < mouse.radius + this.size){
@@ -62,11 +61,11 @@ function draw(){
                 if (this.x !== this.baseX ) {
                     let dx = this.x - this.baseX;
                     let dy = this.y - this.baseY;
-                    this.x -= dx/5;
+                    this.x -= dx/10; // velocidad con la que las particuals vuelve a su posicion org (original 5)
                 } if (this.y !== this.baseY) {
                     let dx = this.x - this.baseX;
                     let dy = this.y - this.baseY;
-                    this.y -= dy/5;
+                    this.y -= dy/10;
                 }
             }
             this.draw();
@@ -78,13 +77,13 @@ function draw(){
         for (var y = 0, y2 = data.height; y < y2; y++) {
             for (var x = 0, x2 = data.width; x < x2; x++) {
                 if (data.data[(y * 4 * data.width) + (x * 4) + 3] > 128) {
-                    let positionX = x;
-                    let positionY = y;
+                    let positionX = x - 30; // x & y coordinate in canvas
+                    let positionY = y - 25;
                     let color = "rgb("+data.data[(y * 4 * data.width) + (x * 4)] + "," +
                                     data.data[(y * 4 * data.width)+ (x * 4) +1] + "," +
                                     data.data[(y * 4 * data.width)+ (x * 4) +2]+")";
 
-                    particleArray.push(new Particle(positionX*4, positionY*4, color));
+                    particleArray.push(new Particle(positionX*8, positionY*8, color, 2)); // x & y affect the size of the image, the fourth the size of the 'pixels'
                 }
             }
         }
@@ -93,7 +92,7 @@ function draw(){
     function animate(){
         requestAnimationFrame(animate);
         ctx.fillStyle = 'rgba(0,0,0,.2)'; // background
-        ctx.fillRect(0, 0, innerWidth,innerHeight);
+        ctx.fillRect(0, 0, innerWidth,innerHeight); // dibuja rectangulo semitransparente cada vez para crear efecto de seguimiento de las particulas
         
         for (let i = 0; i < particleArray.length; i++){
             particleArray[i].update();
@@ -103,8 +102,7 @@ function draw(){
     animate();
 
     // RESIZE SETTING - empty and refill particle array every time window changes size + change canvas size
-    window.addEventListener('resize',
-	function(){
+    window.addEventListener('resize', function(){
 		canvas.width = innerWidth;
 		canvas.height = innerHeight;
 		init();
@@ -118,5 +116,5 @@ png.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAA
 window.addEventListener('load', (event) => {
     console.log('page has loaded');
     ctx.drawImage(png, 0, 0);
-    draw();
+    drawImg();
 });
