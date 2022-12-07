@@ -1,4 +1,3 @@
-# Noruii.github.io
-Pixel Art
+JavaScript Pixel Manipulation
 
-https://noruii.github.io/
+https://noruii.github.io/JS-Pixel-Manipulation/
